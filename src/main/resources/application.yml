@@ -1,0 +1,3 @@
+commandhandler:
+  host: localhost
+  port: 8600
