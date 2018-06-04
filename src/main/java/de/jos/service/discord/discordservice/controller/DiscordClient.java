@@ -37,6 +37,7 @@ public class DiscordClient {
 
     public DiscordClient(RestTemplateBuilder restTemplateBuilder) {
         LOGGER.debug("Connecting Discord-Bot!");
+        initializeBuilder();
         ClientBuilder clientBuilder = new ClientBuilder();
         clientBuilder.withToken(BOT_TOKEN);
         iDiscordClient = clientBuilder.login();
