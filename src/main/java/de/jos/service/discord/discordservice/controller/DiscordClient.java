@@ -36,7 +36,6 @@ public class DiscordClient {
     private URIBuilder uriBuilder;
 
     public DiscordClient(RestTemplateBuilder restTemplateBuilder) {
-        System.out.println("----------------------------------+++++++++++++++++++++++++++++++++++++++++++");
         LOGGER.debug("Connecting Discord-Bot!");
         ClientBuilder clientBuilder = new ClientBuilder();
         clientBuilder.withToken(BOT_TOKEN);
@@ -44,7 +43,6 @@ public class DiscordClient {
         dispatcher = iDiscordClient.getDispatcher();
         dispatcher.registerListener(this);
         restTemplate = restTemplateBuilder.build();
-        System.out.println("----------------------------------+++++++++++++++++++++++++++++++++++++++++++");
         LOGGER.debug("Connected to Discord-Bot successfully!");
     }
 
@@ -95,7 +93,6 @@ public class DiscordClient {
 
     private void initializeBuilder() {
         uriBuilder = new URIBuilder();
-        System.out.println("host: " + host);
         uriBuilder.setPort(port);
         uriBuilder.setHost(host);
         uriBuilder.setScheme("http");
