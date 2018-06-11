@@ -1,5 +1,6 @@
 package de.jos.service.discord.discordservice.controller;
 
+import com.vdurmont.emoji.EmojiManager;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.json.JSONObject;
@@ -14,10 +15,18 @@ import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventDispatcher;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
+import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionAddEvent;
+import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionEvent;
+import sx.blah.discord.handle.impl.obj.ReactionEmoji;
 import sx.blah.discord.handle.obj.IChannel;
+import sx.blah.discord.handle.obj.IMessage;
+import sx.blah.discord.handle.obj.IReaction;
+import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.RequestBuffer;
 
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 @Controller
@@ -29,6 +38,7 @@ public class DiscordClient {
     @Value("${commandhandler.port}")
     private int port;
     private static final String BOT_TOKEN = "NDQzNzc1OTMzNzU3Nzg0MDY1.DdSXEg.Zvkv3DHddO8iQeAHJmDmzIpBStg";
+    private Map<IUser, Map<IReaction, String>> reactionToUrlMapForUser = new HashMap<>();
 
     private final IDiscordClient iDiscordClient;
     private final EventDispatcher dispatcher;
@@ -45,6 +55,12 @@ public class DiscordClient {
         dispatcher.registerListener(this);
         restTemplate = restTemplateBuilder.build();
         LOGGER.debug("Connected to Discord-Bot successfully!");
+    }
+
+    @EventSubscriber
+    public void onReactionAddEvent(ReactionAddEvent event) {
+        event.getReaction();
+        System.out.println("abc");
     }
 
     @EventSubscriber
@@ -82,7 +98,8 @@ public class DiscordClient {
 
     private void sendMessageWithBuffer(String message, IChannel channel) {
         RequestBuffer.request(() -> {
-            channel.sendMessage(message);
+            IMessage a = channel.sendMessage(message);
+            a.addReaction(EmojiManager.getForAlias("one"));
         });
     }
 
