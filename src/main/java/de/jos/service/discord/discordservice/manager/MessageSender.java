@@ -19,8 +19,14 @@ public class MessageSender {
 
     public void sendMessage(JSONObject discordResponse, IChannel channel, IUser user) {
         String message = discordResponse.get("message").toString();
-        MessageOption[] messageOptions = (MessageOption[]) discordResponse.get("messageOptions");
-        emojiHandler.getUserToOptionsMap().get(user).clear();
+
+        MessageOption[] messageOptions = null;
+
+        try {
+            messageOptions = (MessageOption[]) discordResponse.get("messageOptions");
+        } catch (Exception e) {
+
+        }
 
         if (messageOptions != null) {
             sendMessageWithOptions(message, messageOptions, channel, user);
