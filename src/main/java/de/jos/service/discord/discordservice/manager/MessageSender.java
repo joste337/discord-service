@@ -1,5 +1,6 @@
 package de.jos.service.discord.discordservice.manager;
 
+import de.jos.service.discord.discordservice.model.DiscordResponse;
 import de.jos.service.discord.discordservice.model.MessageOption;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,16 +18,10 @@ public class MessageSender {
     @Autowired
     private EmojiHandler emojiHandler;
 
-    public void sendMessage(JSONObject discordResponse, IChannel channel, IUser user) {
-        String message = discordResponse.get("message").toString();
+    public void sendMessage(DiscordResponse discordResponse, IChannel channel, IUser user) {
+        String message = discordResponse.getMessage();
 
-        MessageOption[] messageOptions = null;
-
-        try {
-            messageOptions = (MessageOption[]) discordResponse.get("messageOptions");
-        } catch (Exception e) {
-
-        }
+        MessageOption[] messageOptions = discordResponse.getMessageOptions();
 
         if (messageOptions != null) {
             sendMessageWithOptions(message, messageOptions, channel, user);
@@ -40,12 +35,14 @@ public class MessageSender {
     }
 
     private void sendMessageWithOptions(String message, MessageOption[] messageOptions, IChannel channel, IUser user) {
+        StringBuilder messageBuilder = new StringBuilder();
+        messageBuilder.append(message);
         for (int i = 0; i < messageOptions.length; i++) {
-            message.join("\n" + (i + 1) + ") " + messageOptions[i]);
+            messageBuilder.append("\n").append((i + 1)).append(") ").append(messageOptions[i]);
         }
 
         RequestBuffer.request(() -> {
-            IMessage iMessage = channel.sendMessage(message);
+            IMessage iMessage = channel.sendMessage(messageBuilder.toString());
             emojiHandler.getUserToOptionsMap().put(user, new HashMap<>());
             for (int i = 0; i < messageOptions.length; i++) {
                 iMessage.addReaction(emojiHandler.getNumericEmojiList().get(i));

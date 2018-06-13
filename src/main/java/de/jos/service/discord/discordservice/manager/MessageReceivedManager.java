@@ -2,7 +2,6 @@ package de.jos.service.discord.discordservice.manager;
 
 
 import de.jos.service.discord.discordservice.model.DiscordResponse;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,13 +30,13 @@ public class MessageReceivedManager {
         String url = urlBuilder.buildUriFromMessageReceivedEvent(event);
         LOGGER.info("Requesting URL: {}", url);
 
-        JSONObject response = new JSONObject(doRequestAndResetUriBuilder(() -> restTemplate.getForObject(url, DiscordResponse.class)));
+        DiscordResponse response = doRequestAndResetUriBuilder(() -> restTemplate.getForObject(url, DiscordResponse.class));
 
         messageSender.sendMessage(response, event.getChannel(), event.getAuthor());
     }
 
-    private <T> T doRequestAndResetUriBuilder(Supplier<T> supplier) {
-        T result = supplier.get();
+    private DiscordResponse doRequestAndResetUriBuilder(Supplier<DiscordResponse> supplier) {
+        DiscordResponse result = supplier.get();
         urlBuilder.clearBuilder();
         return result;
     }
