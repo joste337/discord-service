@@ -19,8 +19,8 @@ public class MessageSender {
     private EmojiHandler emojiHandler;
 
     public void sendMessage(DiscordResponse discordResponse, IChannel channel, IUser user) {
-        String message = discordResponse.getMessage();
 
+        String message = discordResponse.getMessage();
         MessageOption[] messageOptions = discordResponse.getMessageOptions();
 
         if (messageOptions != null) {
@@ -38,14 +38,15 @@ public class MessageSender {
         StringBuilder messageBuilder = new StringBuilder();
         messageBuilder.append(message);
         for (int i = 0; i < messageOptions.length; i++) {
-            messageBuilder.append("\n").append((i + 1)).append(") ").append(messageOptions[i]);
+            messageBuilder.append("\n").append((i + 1)).append(") ").append(messageOptions[i].getMessage());
         }
 
         RequestBuffer.request(() -> {
             IMessage iMessage = channel.sendMessage(messageBuilder.toString());
             emojiHandler.getUserToOptionsMap().put(user, new HashMap<>());
             for (int i = 0; i < messageOptions.length; i++) {
-                iMessage.addReaction(emojiHandler.getNumericEmojiList().get(i));
+                final int index = i;
+                RequestBuffer.request(() -> iMessage.addReaction(emojiHandler.getNumericEmojiList().get(index)));
                 emojiHandler.getUserToOptionsMap().get(user).put(i + 1, messageOptions[i].getUrl());
             }
         });
