@@ -1,3 +1,5 @@
-commandhandler:
+commandservice:
   host: localhost
   port: 8600
+  schema: http
+  path: /handleMessage
